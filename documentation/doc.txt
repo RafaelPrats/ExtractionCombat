@@ -1,0 +1,183 @@
+Estructura/documentación del proyecto ExtractionCombat
+
+Enums:
+-E_AttackType:
+	.Ligth
+	.Heavy
+	.Bash
+	.GuardBreak
+-E_Attack_direction:
+	.Left
+	.Right
+	.Top
+	.Forward (para los ataques tipo Bash y GuardBreak)
+-E_AttackProperty:
+	.Normal (Puede bloquearse, Puede hacercele parry, Puede interrumpirse)
+	.Unblockable (No se puede bloquear, Solo dodge o parry)
+	.Unstoppable (es un ataque con HyperArmor, El ataque no se interrumpe por daño pero sí por Bash)
+-E_AttackState:
+	.None (El personaje puede iniciar ataques)
+	.Attacking (El personaje está ejecutando un ataque)
+	.Recovery (El ataque terminó pero el personaje aún no puede atacar)
+-E_CombatState:
+	.Normal
+	.Exhausted (Stamina <= 0)
+	.Stunned (After Parry or Wall Splat)
+-E_GuardDirection:
+	.Guard_Top
+	.Guard_Left
+	.Guard_Right
+-E_StunType:
+	.ParryLigth (parry normal a un ataque ligero)
+	.ParryHeavy (parry normal a un ataque pesado)
+	.ParryExhausted (parry mientras estas exhausted)
+	.GuardBreak (stun debido a un guard break)
+	.WallSplat (stun debido a un Wall splat)
+-E_WeaponType:
+	.Longsword
+	.Axe
+	.Mace
+	.Spear
+	.Dagger
+	.Greatsword
+	.Halberd
+	.Shield
+-F_WeaponAttackSet:
+	.Light_Left(F_AttackData)
+	.Light_Right(F_AttackData)
+	.Light_Top(F_AttackData)
+	.Heavy_Left(F_AttackData)
+	.Heavy_Right(F_AttackData)
+	.Heavy_Top(F_AttackData)
+	.Bash(F_AttackData)
+	.GuardBreak(F_AttackData)
+-E_WeaponRarity
+	.Common
+	.Rare
+	.Epic
+	.Legendary
+
+Structures:
+-F_AttackData:
+	.AttackName(string)
+	.AttackType(E_AttackType)
+	.AttackDirection(E_Attack_direction)
+	.AttackProperty(E_AttackProperty)
+	.Damage(float)
+	.StaminaCost(float)
+	.CanBeCancelled(boolean)
+	.AttackMontage(Anim Montage)
+-F_StunDuration:
+	.ParryLigth(Float)
+	.ParryHeavy(Float)
+	.ParryExhausted(Float)
+	.GuardBreak(Float)
+	.WallSplat(Float)
+-F_WeaponRarityStats:
+	.DamageMultiplier
+	.StaminaMultiplier
+	.AttackSpeedMultiplier
+
+BP_LockOnComponent
+	-Funciones:
+		.FindNearestTarget
+	 	.ActivateLockOn
+	 	.DeactivateLockOn
+	 	.SwitchTarget
+	-Variables:
+		.CurrentTarget(Actor)
+		.LockRange(Float)
+		.isLockedOn(Boolean)
+		.OwnerLocation(Vector)
+		.ClosesDistance(Float)
+		.OwnerCharacter(Character)
+BP_ThirdPersonCharacter
+	-Componentes(solo los nuevos agregados por mi):
+		.BP_LockOnComponent
+		.EnemyGuardWidget
+		.GuardWidget
+	-Funciones:
+		.RestoreCamera
+		.CombatCamera
+		.SetEnemyGuardVisible(Visible=>boolean)
+		.CanStarAttack return boolean
+		.StarAttack(AttackData=>F_AttackData)
+		.ConsumeStamina(Amount=>Float)
+		.EquipWeapon(WeaponData=>DA_WeaponData)
+	-Variables:
+		.DefaultSocketOffset(Vector)
+		.DefaultArmLength(Float)
+		.DefaultCameraRotation(Rotator)
+		.CombatSocket(Vector)
+		.CombatArmLength(Float)
+		.CombatCameraRotation(Rotator)
+		.GuardDirection(E_GuardDirection)
+		.GuardBufferDirection(E_GuardDirection)
+		.IsChangingGuard(boolean)
+		.GuardChangeDelay(float)
+		.MouseThreshold(float)
+		.CombatState(E_CombatState)
+		.Stamina(float) // stamina actual del personaje, pertenece a las estadísticas propias de cada héroe
+		.MaxStamina(float) // stamina total del personaje, pertenece a las estadísticas propias de cada héroe
+		.StaminaRegenRate(float) // regen of stamina por segundo, pertenece a las estadísticas propias de cada héroe
+		.StaminaRegenDealy(float) // tiempo antes de empezar a regenerar stamina, pertenece a las estadísticas propias de cada héroe
+		.LastStaminaUseTime(float) // Guarda el momento en que se consumió stamina por última vez
+		.ExhaustedMoveMultiplier(float) // El personaje se mueve al 60% de velocidad
+		.ExhaustedAttackMultiplier(float) // Ataques al 50% de velocidad
+		.ParryStaminaReward(float) // Stamina recuperada al hacer un parry
+		.StunDurationData(F_StunDuration)
+		.IsStunned(boolean)
+		.CurrentStunType(E_StunType)
+		.CurrentStunDuration(float)
+		.CurrentAttackData(F_AttackData) // Contendrá el ataque actual
+		.AttackState(E_AttackState)
+		.CanCancelAttak(boolean) // Esto se activará con AnimNotifies
+		.AttackHasHit(boolean) // Sirve para saber si el ataque:Hit, Block, Whiff
+		.EquippedWeapon(BP_Weapon)
+		.DefaultWeaponData(DA_WeaponData)
+	-CustomEvents(solo los agregado por mi):
+		.EnhancedInputAction IA_LockOn // input para activar o desactivar el LockOn
+		.EnhancedInputAction IA_SwitchTarget // input action para cambiar de target en el modo LockOn
+		.RequestGuardChange // evento para mejorar los cambios de guardia, aplicándole un delay e input buffering
+		.ApplyStun // evento para aplicar el CombatState=stunned con su duración, en caso de que isStunned==true
+		.InputAction LigthAttack // sin terminar, fase de prueba
+		.InputAction HeavyAttack // sin terminar, fase de prueba
+
+-BP_Weapon:
+	-Componentes:
+		.WeaponMesh(Static Mesh) con forma de cilindro
+	-Variables:
+		.WeaponData(DA_WeaponData)
+		.OwnerCharacter(BP_ThirdPersonCharacter)
+
+Widgets:
+-WBP_GuardIndicator: // se muestra cuando se activa el LockOn y muestra la guardia del jugador
+	-Funciones:
+		.UpdateGuard(NewDirection=>E_GuardDirection) // muestra visualmente la dirección de guardia
+	-Variables:
+		.Img_Top
+		.Img_Rigth
+		.Img_left
+		.GuardDirection(E_GuardDirection)
+-WBP_EnemyGuardIndicator: // se muestra cuando se activa el LockOn y muestra la guardia del enemigo
+	-Funciones:
+		.UpdateGuard(NewDirection=>E_GuardDirection) // como es del enemigo las muestra invertidas, por ejemplo si GuardDirection==Left, se muestra la guardia Right
+	-Variables:
+		.Img_Top
+		.Img_Rigth
+		.Img_left
+		.GuardDirection(E_GuardDirection)
+
+PrimaryDataAssets:
+-DA_WeaponData:
+	-Variables:
+		.WeaponType(E_WeaponType)
+		.AttackSet(F_WeaponAttack)
+		.DamageMultiplier(Float=1)
+		.StaminaMultiplier(Float=1)
+		.AttackSpeedMultiplier(Float=1)
+
+Maniquíes:
+-SKM_Manny_Simple:
+	-Sockets
+		.hand_r->weapon_socket

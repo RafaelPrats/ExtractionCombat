@@ -1,0 +1,47 @@
+-Combate en tercera persona.
+-Un héroe no tendrá un arma definida, dependiendo del arma equipada, tendrá un moveset distinto.
+-Cada Arma(armas medievales) será dueña de su moveset.
+-Siempre cada personaje tendrá un arma equipada. No habrán combates desarmados.
+-Solo cuando esta activado el modo LockOn, se habilita todo el moveset.
+-Cuando no esta activado, solo puede hacer un solo ataque básico, para interactuar con el entorno, romper cajas, etc, y en caso de usarse contra un enemigo, este ataque tendrá la misma dirección(Right)
+-Tipos de ataques:
+	.Ligeros: Son ataques rápidos con poco daño
+	.Heavy: Son ataques lentos con mucho daño
+	.Imbloqueables: Son ataques de tipo Heavy, pero con una característica de ser imbloqueable, solo se pueden esquivar o hacerle parry
+	.Bash: Son ataques frontales sin dirección, estos ataques solo se pueden esquivar
+	.GuardBreak: Es un ataque frontal sin dirección, solo se pueden contrarrestar con otro GuardBreak dentro de una ventana de tiempo
+	.Imparables: Son ataques de tipo Ligeros o Heavy, que solo se pueden interrumpir con un ataque tipo Bash
+-Movimientos defensivos:
+	.Bloqueo normal: consiste en colocar la guardia propia en la misma dirección del ataque del rival
+	.Parry: consiste en activar un ataque Heavy dentro de la ventana de parry de los ataques permitidos
+	.Dash o esquiva: consiste en hacer una esquiva o dash lateral para evitar los ataques.
+	.GuardBreak: al recibir un GuardBreak en contra, solo se puede romper con otro GuardBreak dentro de una ventana de tiempo
+-Reglas avanzadas:
+	.Los ataques ligeros, Heavy e Imparables se pueden bloquear con bloqueos normales.
+	.Los ataques ligeros tienen una ventana de parry mas corta.
+	.Los parry a ataques ligeros dejan stun al rival el tiempo necesario para castigar con un ataque Heavy.
+	.Los ataques ligeros no se pueden interrumpir con GuardBreak
+	.Los ataques Heavy tienen una ventana de parry mas larga.
+	.Los parry a ataques Heavy dejan stun al rival el tiempo necesario para castigar con un ataque ligero nada mas.
+	.Los ataques Heavy, se pueden interrumpir con un GuardBreak dentro durante la animación antes de activar la ventana de parry.
+	.Los Bash interrumpen todo tipo de ataques.
+	.Los Bash SOLO se interrumpen al recibir daño, de tal forma que los GuardBreak NO interrumpen los Bash
+	.Los ataques imbloqueables son ataques pesados, con las mismas características, excepto SOLO se pueden bloquear con parry
+	.Los ataques Heavy, Imbloqueables, Imparables de tipo Heavy y algunos Bash se pueden cancelar.
+	.Cada ataque consume stamina.
+	.Los Cancels consumen stamina.
+	.Luego de consumir stamina, hay un delay de regeneración.
+	.Hacer un parry regenera gran cantidad de stamina.
+	.Recibir un parry en contra, provoca un aumento de delay en la regeneración de stamina
+	.Al agotarse la stamina, el personaje entra en modo Exhausted.
+	.En el modo Exhausted, el personaje SÍ puede atacar, esquivar, guardBreak y hacer parry.
+	.En el modo Exhausted, el personaje NO puede cancelar ataques, ni realizar combos.
+	.En el modo Exhausted, el personaje se mueve lento y ataca lento.
+	.Sin un jugador recibe un parry en contra mientras esta Exhausted, queda en stun durante un tiempo considerable.
+	.En el modo Exhausted, el delay de regeneración de stamina luego de cada acción de ataque es mas grande.
+	.En el modo Exhausted, hacer un parry regenera gran cantidad extra de stamina.
+	.En el modo Exhausted, hacer un bloqueo regenera una cantidad menor extra de stamina.
+-Si el ultimo golpe que elimina a un rival, viene de un ataque Heavy, Imbloqueable o Imparable de tipo Heavy, al ganador, se le abrirá una ventana de 3 segundos, para escoger entre 3 eliminaciones/finalizaciones distintas.
+-Mientras se esta ejecutando una eliminación/finalización el jugador ganador, queda vulnerable y puede recibir daño de un tercero.
+-Las eliminaciones/finalizaciones no se pueden cancelar por decisión del jugador ganador, solo si recibe daño de un tercero.
+-Si el ultimo golpe que eliminar a un rival, viene de un ataque Ligero, Bash o Imparable de tipo ligero, el rival muere instantáneamente.
