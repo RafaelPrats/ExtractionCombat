@@ -45,3 +45,16 @@
 -Mientras se esta ejecutando una eliminación/finalización el jugador ganador, queda vulnerable y puede recibir daño de un tercero.
 -Las eliminaciones/finalizaciones no se pueden cancelar por decisión del jugador ganador, solo si recibe daño de un tercero.
 -Si el ultimo golpe que eliminar a un rival, viene de un ataque Ligero, Bash o Imparable de tipo ligero, el rival muere instantáneamente.
+
+Secuencia de animación del ataque:
+-Inicio
+-iniVentanaCancel // los ataques Ligeros y GuardBreak no se pueden cancelar
+-iniVentanaInterrupcionByGuardBreak // solo los ataques Heavy se pueden interrumpir con un GuardBreak
+-finVentanaCancel
+-finVentanaInterrupcionByGuardBreak
+-iniVentanaParry
+-finVentanaParry
+-iniVentanaHit
+-finVentanaHit
+-Recovery
+-Fin
