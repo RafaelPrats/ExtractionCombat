@@ -58,3 +58,7 @@ Secuencia de animación del ataque:
 -finVentanaHit
 -Recovery
 -Fin
+
+AttackDirection = dirección definida por la animación / atacante
+GuardDirection = dirección visual que debe cubrir el defensor
+CompareAttackAndGuardDirections resuelve la equivalencia real entre ambas
