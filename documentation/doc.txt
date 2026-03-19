@@ -102,7 +102,7 @@ BP_ThirdPersonCharacter
 		.BP_LockOnComponent
 		.EnemyGuardWidget(WidgetClass=WBP_EnemyGuardIndicator)
 		.GuardWidget(WidgetClass=WBP_GuardIndicator)
-		.StaminaWidgetComponent(WidgetClass=WBP_StaminaBar)
+		.HealtStaminaWidgetComponent(WidgetClass=WBP_HealtStaminaBar)
 	-Funciones:
 		.RestoreCamera
 		.CombatCamera
@@ -215,11 +215,13 @@ Widgets:
 		.Img_Rigth
 		.Img_left
 		.GuardDirection(E_GuardDirection)
--WBP_StaminaBar:
+-WBP_HealtStaminaBar:
 	-Funciones:
 		.UpdateStaminaBar
+		.UpdateHealtBar
 	-Variables:
 		.PB_Stamina(ProgressBar)
+		.PB_Health(ProgressBar)
 		.OwnerCharacter(BP_ThirdPersonCharacter)
 
 PrimaryDataAssets:
