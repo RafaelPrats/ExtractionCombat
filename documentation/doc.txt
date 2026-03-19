@@ -42,15 +42,6 @@ Enums:
 	.Greatsword
 	.Halberd
 	.Shield
--F_WeaponAttackSet:
-	.Light_Left(F_AttackData)
-	.Light_Right(F_AttackData)
-	.Light_Top(F_AttackData)
-	.Heavy_Left(F_AttackData)
-	.Heavy_Right(F_AttackData)
-	.Heavy_Top(F_AttackData)
-	.Bash(F_AttackData)
-	.GuardBreak(F_AttackData)
 -E_WeaponRarity
 	.Common
 	.Rare
@@ -86,6 +77,12 @@ Structures:
 	.Heavy_Top(F_AttackData)
 	.Bash(F_AttackData)
 	.GuardBreak(F_AttackData)
+	.ExhaustedLight_Left(F_AttackData)
+	.ExhaustedLight_Right(F_AttackData)
+	.ExhaustedLight_Top(F_AttackData)
+	.ExhaustedHeavy_Left(F_AttackData)
+	.ExhaustedHeavy_Right(F_AttackData)
+	.ExhaustedHeavy_Top(F_AttackData)
 
 BP_LockOnComponent
 	-Funciones:
@@ -103,8 +100,9 @@ BP_LockOnComponent
 BP_ThirdPersonCharacter
 	-Componentes(solo los nuevos agregados por mi):
 		.BP_LockOnComponent
-		.EnemyGuardWidget
-		.GuardWidget
+		.EnemyGuardWidget(WidgetClass=WBP_EnemyGuardIndicator)
+		.GuardWidget(WidgetClass=WBP_GuardIndicator)
+		.StaminaWidgetComponent(WidgetClass=WBP_StaminaBar)
 	-Funciones:
 		.RestoreCamera
 		.CombatCamera
@@ -116,6 +114,14 @@ BP_ThirdPersonCharacter
 		.StartEquippedWeaponTrace
 		.StopEquippedWeaponTrace
 		.CompareAttackAndGuardDirections(Attack=>E_AttackDirection, Guard=>E_GuardDirection)
+		.ProcessNormalAttak(AttackData=>F_AttackData)
+		.EnterAttackRecovery
+		.EndCurrentAttack
+		.BeginAttackCancelWindow
+		.EndAttackCancelWindow
+		.GetAttackDataByState(CurrentAttackData=>F_AttackData, AttackType=>E_AttackType)
+		.HandleStaminaRegen(DeltaTime=>Float)
+		.UpdateStaminaWidgetFacing
 	-Variables:
 		.DefaultSocketOffset(Vector)
 		.DefaultArmLength(Float)
@@ -143,10 +149,14 @@ BP_ThirdPersonCharacter
 		.CurrentStunDuration(float)
 		.CurrentAttackData(F_AttackData) // Contendrá el ataque actual
 		.AttackState(E_AttackState)
-		.CanCancelAttak(boolean) // Esto se activará con AnimNotifies
+		.CanCancelAttack(boolean) // Esto se activará con AnimNotifies
 		.AttackHasHit(boolean) // Sirve para saber si el ataque:Hit, Block, Whiff
 		.EquippedWeapon(BP_Weapon)
 		.DefaultWeaponData(DA_WeaponData)
+		.Health(Float)
+		.MaxHealth(Float)
+		.CanBeInterruptedByGuardBreak(boolean)
+		.IsCurrentAttackParryable(boolean)
 	-CustomEvents(solo los agregado por mi):
 		.EnhancedInputAction IA_LockOn // input para activar o desactivar el LockOn
 		.EnhancedInputAction IA_SwitchTarget // input action para cambiar de target en el modo LockOn
@@ -175,12 +185,18 @@ BP_ThirdPersonCharacter
 		.DebugTrace(boolean)
 
 AnimNotifys:
--AN_StartWeaponTrace:
--AN_StopWeaponTrace:
+-AN_StartWeaponTrace
+-AN_StopWeaponTrace
+-AN_AttackRecovery
+-AN_AttackFinished
+-AN_AttackCancelStart
+-AN_AttackCancelEnd
 
 Animations:
 -AN_LightAttack_Test(Animation Sequence)
 -AN_LightAttack_Test_Montage(Animation Montage)
+-AN_ExhaustedAttackLight(Animation Montage)
+-AN_ExhaustedAttackHeavy(Animation Montage)
 
 Widgets:
 -WBP_GuardIndicator: // se muestra cuando se activa el LockOn y muestra la guardia del jugador
@@ -199,6 +215,12 @@ Widgets:
 		.Img_Rigth
 		.Img_left
 		.GuardDirection(E_GuardDirection)
+-WBP_StaminaBar:
+	-Funciones:
+		.UpdateStaminaBar
+	-Variables:
+		.PB_Stamina(ProgressBar)
+		.OwnerCharacter(BP_ThirdPersonCharacter)
 
 PrimaryDataAssets:
 -DA_WeaponData:
