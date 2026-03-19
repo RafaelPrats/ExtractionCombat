@@ -122,6 +122,7 @@ BP_ThirdPersonCharacter
 		.GetAttackDataByState(CurrentAttackData=>F_AttackData, AttackType=>E_AttackType)
 		.HandleStaminaRegen(DeltaTime=>Float)
 		.UpdateStaminaWidgetFacing
+		.TryCancelAttack
 	-Variables:
 		.DefaultSocketOffset(Vector)
 		.DefaultArmLength(Float)
