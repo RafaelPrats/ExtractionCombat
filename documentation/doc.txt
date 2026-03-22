@@ -215,7 +215,6 @@ Widgets:
 		.Img_Top
 		.Img_Rigth
 		.Img_left
-		.GuardDirection(E_GuardDirection)
 -WBP_HealtStaminaBar:
 	-Funciones:
 		.UpdateStaminaBar
