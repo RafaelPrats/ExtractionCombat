@@ -230,8 +230,18 @@ AnimNotifys:
 -AN_AttackWarningEnd
 
 Animations:
--AN_LightAttack_Test(Animation Sequence)
--AN_LightAttack_Test_Montage(Animation Montage)
+-AN_LightRightAttack_Test(Animation Sequence)
+-AN_LightRightAttack_Test_Montage(Animation Montage)
+-AN_LightLeftAttack_Test(Animation Sequence)
+-AN_LightLeftAttack_Test_Montage(Animation Montage)
+-AN_LightTopAttack_Test(Animation Sequence)
+-AN_LightTopAttack_Test_Montage(Animation Montage)
+-AN_HeavyLeftAttack_Test(Animation Sequence)
+-AN_HeavyLeftAttack_Test_Montage(Animation Montage)
+-AN_HeavyRightAttack_Test(Animation Sequence)
+-AN_HeavyRightAttack_Test_Montage(Animation Montage)
+-AN_HeavyTopAttack_Test(Animation Sequence)
+-AN_HeavyTopAttack_Test_Montage(Animation Montage)
 -AN_ExhaustedAttackLight(Animation Montage)
 -AN_ExhaustedAttackHeavy(Animation Montage)
 
