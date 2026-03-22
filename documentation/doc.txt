@@ -123,6 +123,8 @@ BP_ThirdPersonCharacter
 		.HandleStaminaRegen(DeltaTime=>Float)
 		.UpdateStaminaWidgetFacing
 		.TryCancelAttack
+		.ShowAttackWarning
+		.HideAttackWarning
 	-Variables:
 		.DefaultSocketOffset(Vector)
 		.DefaultArmLength(Float)
@@ -158,6 +160,7 @@ BP_ThirdPersonCharacter
 		.MaxHealth(Float)
 		.CanBeInterruptedByGuardBreak(boolean)
 		.IsCurrentAttackParryable(boolean)
+		.CancelStaminaCost(Float)
 	-CustomEvents(solo los agregado por mi):
 		.EnhancedInputAction IA_LockOn // input para activar o desactivar el LockOn
 		.EnhancedInputAction IA_SwitchTarget // input action para cambiar de target en el modo LockOn
@@ -165,7 +168,7 @@ BP_ThirdPersonCharacter
 		.ApplyStun // evento para aplicar el CombatState=stunned con su duración, en caso de que isStunned==true
 		.InputAction LigthAttack // sin terminar, fase de prueba
 		.InputAction HeavyAttack // sin terminar, fase de prueba
-
+		.InputAction IA_CancelAttack // llama la función TryCancelAttack
 -BP_Weapon:
 	-Componentes:
 		.WeaponMesh(Static Mesh) 
@@ -184,7 +187,38 @@ BP_ThirdPersonCharacter
 		.PreviousEnd(Vector)
 		.HitActorsThisSwing(Array[Actor])
 		.DebugTrace(boolean)
-
+-BP_TrainingEnemy: // hijo de BP_ThirdPersonCharacter
+	-Funciones:
+		.GetCurrentLockRange outs(LockRangeValue=>Float)
+		.UpdateTargetDistance
+		.MoveTowardPlayer
+		.TryActivateLockOn
+		.HandleAIDetectionAndApproach
+		.FaceCurrentTarget
+		.StartAutoGuardChangeLoop
+		.ScheduleNextGuardChange
+		.TryChangeAIGuardDirection
+		.GetAttackDirectionFromGuard outs(AttackDirection=>E_AttackDirection)
+		.GetAISelectedAttackData(SelectedAttackType=>E_AttackType, SelectedAttackDirection=>E_AttackDirection) outs(AttackData=>F_AttackData)
+		.StartAutoAttackLoop
+		.ScheduleNextAttack
+		.TryPerformAutoAttack
+	-Variables:
+		.PlayerRef(BP_ThirdPersonCharacter)
+		.AttackRange(Float)
+		.StopMoveRange(Float)
+		.AutoAttackIntervalMin(Float)
+		.AutoAttackIntervalMax(Float)
+		.AutoAttackEnabled(Boolean)
+		.IsInAttackRange(Boolean)
+		.CurrentTargetDistance(Float)
+		.CanChooseNewAttack(Boolean)
+		.TargetDetected(Boolean)
+		.LockOnActivated(Boolean)
+		.DetectionRange(Float)
+		.AutoGuardChangeEnabled(Boolean)
+		.GuardChangeIntervalMin(Float)
+		.GuardChangeIntervalMax
 AnimNotifys:
 -AN_StartWeaponTrace
 -AN_StopWeaponTrace
@@ -192,6 +226,8 @@ AnimNotifys:
 -AN_AttackFinished
 -AN_AttackCancelStart
 -AN_AttackCancelEnd
+-AN_AttackWarningStart
+-AN_AttackWarningEnd
 
 Animations:
 -AN_LightAttack_Test(Animation Sequence)
@@ -211,10 +247,19 @@ Widgets:
 -WBP_EnemyGuardIndicator: // se muestra cuando se activa el LockOn y muestra la guardia del enemigo
 	-Funciones:
 		.UpdateGuard(NewDirection=>E_GuardDirection) // como es del enemigo las muestra invertidas, por ejemplo si GuardDirection==Left, se muestra la guardia Right
+		.ClearIncomingAttackWarning
+		.ShowIncomingAttackWarning(AttackDirection=>E_AttackDirection, AttackType=>E_AttackType)
+		.ResetAllDirectionVisuals
 	-Variables:
 		.Img_Top
 		.Img_Rigth
 		.Img_left
+		.NormalColor(LinearColor)
+		.LightWarningColor(LinearColor)
+		.HeavyWarningColor(LinearColor)
+		.ShowingAttackWarning(Boolean)
+		.OwnerCharacter(BP_ThirdPersonCharacter)
+		.ScaleWarning(Vector 2D)
 -WBP_HealtStaminaBar:
 	-Funciones:
 		.UpdateStaminaBar
