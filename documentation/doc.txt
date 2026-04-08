@@ -252,10 +252,19 @@ Widgets:
 -WBP_GuardIndicator: // se muestra cuando se activa el LockOn y muestra la guardia del jugador
 	-Funciones:
 		.UpdateGuard(NewDirection=>E_GuardDirection) // muestra visualmente la dirección de guardia
+		.ResetAllDirectionVisuals
+		.ClearOwnAttackWarning
+		.ShowOwnAttackWarning(AttackDirection=>E_AttackDirection, AttackType=>E_AttackType, AttackProperty=>E_AttackProperty)
 	-Variables:
 		.Img_Top
 		.Img_Rigth
 		.Img_left
+		.GuardDirection(E_GuardDirection)
+		.Img_UnblockableTop
+		.Img_UnblockableRight
+		.Img_UnblockableLeft
+		.Img_GuardBreak
+		.Img_BashWarning
 		.GuardDirection(E_GuardDirection)
 -WBP_EnemyGuardIndicator: // se muestra cuando se activa el LockOn y muestra la guardia del enemigo
 	-Funciones:
