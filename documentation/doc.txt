@@ -57,12 +57,14 @@ Structures:
 	.StaminaCost(float)
 	.CanBeCancelled(boolean)
 	.AttackMontage(Anim Montage)
+	.DelayHit(Float)
 -F_StunDuration:
 	.ParryLigth(Float)
 	.ParryHeavy(Float)
 	.ParryExhausted(Float)
 	.GuardBreak(Float)
 	.WallSplat(Float)
+	.Bash(Float)
 -F_WeaponRarityStats:
 	.DamageMultiplier
 	.StaminaMultiplier
@@ -82,6 +84,9 @@ Structures:
 	.ExhaustedHeavy_Left(F_AttackData)
 	.ExhaustedHeavy_Right(F_AttackData)
 	.ExhaustedHeavy_Top(F_AttackData)
+	.Heavy_LeftUnblockable(F_AttackData)
+	.Heavy_RightUnblockable(F_AttackData)
+	.Heavy_TopUnblockable(F_AttackData)
 
 BP_LockOnComponent
 	-Funciones:
@@ -112,18 +117,36 @@ BP_ThirdPersonCharacter
 		.EquipWeapon(WeaponData=>DA_WeaponData)
 		.StartEquippedWeaponTrace
 		.StopEquippedWeaponTrace
+		.ReceiveAttack(Attacker=>BP_ThirdPersonCharacter, AttackData=>F_AttackData, HitResult=>HitResult)
 		.CompareAttackAndGuardDirections(Attack=>E_AttackDirection, Guard=>E_GuardDirection)
-		.ProcessNormalAttak(AttackData=>F_AttackData)
+		.ProcessNormalAttak(AttackData=>F_AttackData, Attacker=>BP_ThirdPersonCharacter)
 		.EnterAttackRecovery
 		.EndCurrentAttack
 		.BeginAttackCancelWindow
 		.EndAttackCancelWindow
-		.GetAttackDataByState(CurrentAttackData=>F_AttackData, AttackType=>E_AttackType)
+		.GetAttackDataByState(CurrentAttackData=>F_AttackData, AttackType=>E_AttackType) outs(CurrentAttack=>F_AttackData)
 		.HandleStaminaRegen(DeltaTime=>Float)
 		.UpdateStaminaWidgetFacing
 		.TryCancelAttack
 		.ShowAttackWarning
 		.HideAttackWarning
+		.BeginParryWindow
+		.EndParryWindow
+		.TryParry(IncomingAttackData=>F_AttackData, Attacker=>BP_ThirdPersonCharacter) outs(Success=>boolean)
+		.UnlockAttackStart
+		.LockAttackForDuration(Duration=>float)
+		.CanStartBash(outs: CanAttack=>boolean)
+		.ProcessBashAttack(AttackData=>F_AttackData, Attacker=>BP_ThirdPersonCharacter)
+		.CanStartGuardBreak(outs: CanAttack=>boolean)
+		.StartGuardBreakTrace
+		.UpdateGuardBreakTrace
+		.HandleGBTraceHit(DidHit=>boolean, HitResult=>HitResult) // porque cree un socket en el esqueleto del personaje para los bash
+		.ProcessHitGB(HitActor=>Actor, HitResult=>HitResult)
+		.ProcessGBAttack(AttackData=>F_AttackData, Attacker=>BP_ThirdPersonCharacter)
+		.ProcessUnblockableAttack(AttackData=>F_AttackData, Attacker=>BP_ThirdPersonCharacter)
+		.CanStartUnblockable(outs: CanAttack=>boolean)
+		.ShowHyperArmorFeedback
+		.HideHyperArmorFeedback
 	-Variables:
 		.DefaultSocketOffset(Vector)
 		.DefaultArmLength(Float)
@@ -160,14 +183,31 @@ BP_ThirdPersonCharacter
 		.CanBeInterruptedByGuardBreak(boolean)
 		.IsCurrentAttackParryable(boolean)
 		.CancelStaminaCost(Float)
+		.TryingParry(boolean)
+		.CurrentAttackWasParry(boolean)
+		.SelectedMontageBaseDuration(float)
+		.bCanStartAttack(boolean)
+		.BlockAttackDelay(float)
+		.AttackReenableTimerHandle(TimerHandle)
+		.SelectedMontageHitDuration(float)
+		.SelectedMontageBlockDuration(float)
+		.isGuardBreakTracing(boolean)
+		.HitActorsThisSwing(Array[Actor])
+		.PreviousGuardBreak(Vector)
+		.TraceRadius(float)
+		.CombatStatePrevious(E_CombatState)
+		.IsUnstoppable(boolean)
+		.HyperArmorMIDs(Array[MaterialInstanceDynamic])
 	-CustomEvents(solo los agregado por mi):
 		.EnhancedInputAction IA_LockOn // input para activar o desactivar el LockOn
 		.EnhancedInputAction IA_SwitchTarget // input action para cambiar de target en el modo LockOn
 		.RequestGuardChange // evento para mejorar los cambios de guardia, aplicándole un delay e input buffering
 		.ApplyStun // evento para aplicar el CombatState=stunned con su duración, en caso de que isStunned==true
-		.InputAction LigthAttack // sin terminar, fase de prueba
-		.InputAction HeavyAttack // sin terminar, fase de prueba
+		.InputAction LigthAttack 
 		.InputAction IA_CancelAttack // llama la función TryCancelAttack
+		.InputAction Bash
+		.InputAction GuardBreak
+		.EnhancedInputAction IA_HeavyAttack // trigered para separar los ataques normales y cargados, con hold de tecla y tap
 -BP_Weapon:
 	-Componentes:
 		.WeaponMesh(Static Mesh) 
@@ -177,6 +217,8 @@ BP_ThirdPersonCharacter
 		.UpdateWeaponTrace
 		.ProcessHit(HitActor=>Actor, HitResult=>HitResult)
 		.HandleTraceHit(DidHit=>boolean, HitResult=>HitResult)
+		.StartBashTrace
+		.UpdateBashTrace
 	-Variables:
 		.WeaponData(DA_WeaponData)
 		.OwnerCharacter(BP_ThirdPersonCharacter)
@@ -186,6 +228,8 @@ BP_ThirdPersonCharacter
 		.PreviousEnd(Vector)
 		.HitActorsThisSwing(Array[Actor])
 		.DebugTrace(boolean)
+		.IsTracingBash(boolean)
+		.PreviousBash(Vector)
 -BP_TrainingEnemy: // hijo de BP_ThirdPersonCharacter
 	-Funciones:
 		.GetCurrentLockRange outs(LockRangeValue=>Float)
@@ -232,21 +276,7 @@ AnimNotifys:
 -AN_ParryStart
 -AN_ParryEnd
 
-Animations:
--AN_LightRightAttack_Test(Animation Sequence)
--AN_LightRightAttack_Test_Montage(Animation Montage)
--AN_LightLeftAttack_Test(Animation Sequence)
--AN_LightLeftAttack_Test_Montage(Animation Montage)
--AN_LightTopAttack_Test(Animation Sequence)
--AN_LightTopAttack_Test_Montage(Animation Montage)
--AN_HeavyLeftAttack_Test(Animation Sequence)
--AN_HeavyLeftAttack_Test_Montage(Animation Montage)
--AN_HeavyRightAttack_Test(Animation Sequence)
--AN_HeavyRightAttack_Test_Montage(Animation Montage)
--AN_HeavyTopAttack_Test(Animation Sequence)
--AN_HeavyTopAttack_Test_Montage(Animation Montage)
--AN_ExhaustedAttackLight(Animation Montage)
--AN_ExhaustedAttackHeavy(Animation Montage)
+Animaciones y sus montages placeholders para cada tipo de ataque, con su dirección.
 
 Widgets:
 -WBP_GuardIndicator: // se muestra cuando se activa el LockOn y muestra la guardia del jugador
@@ -266,6 +296,9 @@ Widgets:
 		.Img_GuardBreak
 		.Img_BashWarning
 		.GuardDirection(E_GuardDirection)
+		.ShowingAttackWarning(boolean)
+		.OwnerCharacter(BP_ThirdPersonCharacter)
+		.ScaleWarning(Vector 2D)
 -WBP_EnemyGuardIndicator: // se muestra cuando se activa el LockOn y muestra la guardia del enemigo
 	-Funciones:
 		.UpdateGuard(NewDirection=>E_GuardDirection) // como es del enemigo las muestra invertidas, por ejemplo si GuardDirection==Left, se muestra la guardia Right
@@ -282,6 +315,12 @@ Widgets:
 		.ShowingAttackWarning(Boolean)
 		.OwnerCharacter(BP_ThirdPersonCharacter)
 		.ScaleWarning(Vector 2D)
+		.BashWarningColor(LinearColor)
+		.Img_UnblockableTop
+		.Img_UnblockableRight
+		.Img_UnblockableLeft
+		.Img_GuardBreak
+		.Img_BashWarning
 -WBP_HealtStaminaBar:
 	-Funciones:
 		.UpdateStaminaBar
