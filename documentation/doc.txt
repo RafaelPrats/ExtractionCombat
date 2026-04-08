@@ -14,7 +14,6 @@ Enums:
 -E_AttackProperty:
 	.Normal (Puede bloquearse, Puede hacercele parry, Puede interrumpirse)
 	.Unblockable (No se puede bloquear, Solo dodge o parry)
-	.Unstoppable (es un ataque con HyperArmor, El ataque no se interrumpe por daño pero sí por Bash)
 -E_AttackState:
 	.None (El personaje puede iniciar ataques)
 	.Attacking (El personaje está ejecutando un ataque)
@@ -228,6 +227,10 @@ AnimNotifys:
 -AN_AttackCancelEnd
 -AN_AttackWarningStart
 -AN_AttackWarningEnd
+-AN_UnstoppableStart
+-AN_UnstoppableEnd
+-AN_ParryStart
+-AN_ParryEnd
 
 Animations:
 -AN_LightRightAttack_Test(Animation Sequence)

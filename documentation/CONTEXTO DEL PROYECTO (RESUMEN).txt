@@ -1,16 +1,3 @@
-
-1. Cree un socket nuevo en el mango de la espada, ya que la animación de bash será con esa parte del arma
-2. Añadi el tipo Bash dentro del E_StunType
-3. En BP_Weapon: 
-	-cree estas variables: isTracingBash(boolean) y PreviousBash(Vector)
-	-modifique la función StopWeaponTrace para setear isTracingBash = false
-	-cree la función StartBashTrace (imagen 1)
-	-cree la función UpdateBashTrace (imagen 2)
-	-modifique el EventTick (imagen 3)
-4. En BP_ThirdPersonCharacter:
-	-modifique la función ReceiveAttack (imagen 4)
-	-cree la función ProcessBashAttack inputs(AttackData=>F_AttackData, Attacker=>BP_ThirdPersonCharacter) (imágenes 5 y 6)
-	-cree la función CanStartBash (imagen 7)
-	-modifique le input Jumo, ya no va mas, y use la tecla Spacebar para el ataque bash (imágenes 8 y 9)
-	-modifique la función StartEquippedWeaponTrace (imagen 10)
-5. Cree una animación de bash, con el root motion activado para que se mueva mientras ataca y golpee con el mango del arma
+67+112+6+1180+276+12+232
+67+112+6+1520+276+12+232
+5+2+
