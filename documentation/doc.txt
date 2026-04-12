@@ -147,6 +147,7 @@ BP_ThirdPersonCharacter
 		.CanStartUnblockable(outs: CanAttack=>boolean)
 		.ShowHyperArmorFeedback
 		.HideHyperArmorFeedback
+		.GetLockOnMoveDirections
 	-Variables:
 		.DefaultSocketOffset(Vector)
 		.DefaultArmLength(Float)
@@ -198,6 +199,8 @@ BP_ThirdPersonCharacter
 		.CombatStatePrevious(E_CombatState)
 		.IsUnstoppable(boolean)
 		.HyperArmorMIDs(Array[MaterialInstanceDynamic])
+		.LockOnDesiredDistance(Float)
+		.LockOnDistanceCorrectionStrength(float)
 	-CustomEvents(solo los agregado por mi):
 		.EnhancedInputAction IA_LockOn // input para activar o desactivar el LockOn
 		.EnhancedInputAction IA_SwitchTarget // input action para cambiar de target en el modo LockOn

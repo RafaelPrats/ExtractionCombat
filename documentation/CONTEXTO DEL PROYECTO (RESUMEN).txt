@@ -1,3 +1,123 @@
-67+112+6+1180+276+12+232
-67+112+6+1520+276+12+232
-5+2+
+Estoy desarrollando un sistema de combate tipo For Honor en Unreal Engine con Blueprints. Ya tengo una base bastante avanzada y quiero continuar desde este punto.
+
+Estado actual del sistema:
+
+🔹 Sistema base:
+
+* LockOn funcional (enemigo sigue al jugador, rota hacia él)
+* Sistema de guardia direccional (Left, Right, Top)
+* Widgets:
+
+  * Guardia propia
+  * Guardia invertida del enemigo
+  * Warning de ataques (dirección + tipo)
+
+🔹 IA:
+
+* Se acerca al jugador
+* Activa LockOn en rango
+* Cambia guardia automáticamente en intervalos
+* Ataca automáticamente (Light / Heavy / Unblockable / Bash / GuardBreak)
+* No cambia guardia si está Stunned
+
+🔹 Ataques implementados:
+
+* Light
+* Heavy
+* Unblockable (manteniendo botón heavy)
+* Bash (con stun y follow-up garantizado light)
+* GuardBreak (interrumpe ataques, sin ventanas aún)
+* Sistema de AttackDirection basado en la guardia
+
+🔹 Sistema de combate:
+
+* AttackState (None, Attacking, etc.)
+* CombatState (Normal, Stunned, etc.)
+* Hit / Block con delays (no se puede atacar inmediatamente)
+* Parry funcional:
+
+  * Ventana de parry en primeros frames
+  * Si fallas timing → recibes hit aunque ataques
+* Stun system (incluye stun por parry y bash)
+* Hyper Armor:
+
+  * Implementado como ventana (no enum)
+  * Activado por AnimNotify
+  * Visual feedback con Emissive en materiales (Material Instance Dynamic en array)
+  * Funciones Show/HideHyperArmorFeedback
+
+🔹 Weapon Trace:
+
+* Sistema de trazas con sockets (arma y cuerpo)
+* Bash y GuardBreak usan sockets en personaje
+* Sin debug traces visibles
+
+🔹 Animaciones:
+
+* Root Motion funcionando para ataques
+* Movimiento bloqueado durante AttackState
+* Notifies usados para:
+
+  * Attack start
+  * Attack end
+  * Parry window
+  * Hyper armor window
+  * Attack warnings
+
+🔹 UI (Widgets):
+
+* Warning por dirección
+* Warning por tipo:
+
+  * Normal
+  * Unblockable
+  * Bash
+  * GuardBreak
+* Escalado visual en dirección activa
+* Reset correcto de visuales
+
+🔹 Mejoras ya implementadas:
+
+* Delay tras hit
+* Delay tras block
+* Interrupción de animación al recibir hit
+* Corrección de loops de ataque
+* Control de stamina (básico)
+* Separación de lógica por tipo de ataque
+
+---
+
+🎯 Estado actual:
+
+Todo funciona correctamente:
+
+* IA ataca
+* Parry funciona
+* Hyper armor visual funciona
+* Warnings funcionan
+* Bash y GuardBreak funcionales
+
+---
+
+🚀 Próximo paso:
+
+Quiero implementar el sistema de:
+
+👉 DODGES / ESQUIVAS
+
+Requisitos que tengo en mente:
+
+* Usar Spacebar para dodge
+* Direccionales (Left, Right, Back, posiblemente Forward)
+* Invulnerability frames (i-frames)
+* Cancelar ataques en ciertas ventanas
+* Interacción con:
+
+  * Unblockables
+  * Bash
+  * GuardBreak
+* Integrarse con el sistema actual (AttackState, CombatState)
+
+---
+
+Quiero que me guíes paso a paso (muy detallado) para implementar el sistema de dodges correctamente sobre esta base.
