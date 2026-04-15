@@ -46,6 +46,11 @@ Enums:
 	.Rare
 	.Epic
 	.Legendary
+-E_DodgeDirection
+	.Left
+	.Right
+	.Back
+	.Forward
 
 Structures:
 -F_AttackData:
